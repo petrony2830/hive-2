@@ -1,0 +1,44 @@
+Mapper is the same as before and it outputs user_id (tab) 1:
+
+#!/usr/bin/env python
+import sys
+ 
+for line in sys.stdin:
+    record = line.split("::")
+    if len(record) == 4:
+		print record[0], "\t1"	# user_id (tab) 1
+Reducer is a bit tricky (if you try to copy/paste this code from the web - double check all indentations):
+
+#!/usr/bin/env python
+import sys
+ 
+# initial values
+temp_count = 0
+temp_word = None
+ratings = {}
+ 
+for line in sys.stdin:
+    line = line.strip()
+    word, count = line.split('\t', 1)
+    if word == temp_word:
+        temp_count = temp_count + 1
+    else:
+	# this part is new
+	try:
+            ratings[temp_count] = ratings[temp_count] + 1
+        except:
+            ratings[temp_count] = 1
+        temp_word = word
+        temp_count = 1
+
+# output very last word in the list
+try:
+    ratings[temp_count] = ratings[temp_count] + 1
+except:
+    ratings[temp_count] = 1
+
+del ratings[0]
+
+# output all results
+for count in ratings.keys():
+    print count, "\t", ratings[count]
