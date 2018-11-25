@@ -1,0 +1,48 @@
+There are many ways to solve the same problem. Here is my version of Python code.
+
+Mapper:
+
+#!/usr/bin/env python  
+import sys
+
+for line in sys.stdin:
+    # remove leading and trailing whitespace
+    line = line.strip()
+
+    # parse the input we got from mapper.py
+    line = line.split("::")
+    if len(line) == 4:
+        # rating
+	movie = line[1]
+        user = line[0]
+        print '%s %s %s' % (user,movie,0)
+    else:
+        # users
+        user = line[0]
+        gender = line[1]
+	print '%s %s %s' % (user,0,gender)
+Reducer:
+
+#!/usr/bin/env python
+import sys
+ 
+counts = {}
+index = ""
+ 
+# input comes from STDIN
+for line in sys.stdin:
+    # remove leading and trailing whitespace
+    line = line.strip()
+ 
+    # parse the input we got from mapper.py
+    user, movie, gender = line.split()
+    if movie == "0":
+        index = gender
+    else:
+        try:
+            counts[index] = counts[index] + 1
+	except:
+	    counts[index] = 1
+
+for gender in counts.keys():
+    print "%s\t%s" % (gender, counts[gender])
