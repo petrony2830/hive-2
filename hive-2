@@ -1,0 +1,41 @@
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS ratings;
+DROP TABLE IF EXISTS newtable;
+
+CREATE EXTERNAL TABLE users 
+(UserID INT, 
+ n1 STRING, 
+ Gender STRING, 
+ n2 STRING, 
+ Age INT, 
+ n3 STRING, 
+ Occupation INT, 
+ n4 STRING, 
+ Zipcode STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ':' 
+LOCATION  '/user/cloudera/prac08/input_users/';
+
+CREATE EXTERNAL TABLE ratings 
+(UserID INT, 
+ n1 STRING, 
+ MovieID INT, 
+ n2 STRING, 
+ Rating INT, 
+ n3 STRING, 
+ Time INT)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ':' 
+LOCATION  '/user/cloudera/prac08/input_ratings/';
+
+
+CREATE TABLE newtable AS SELECT ratings.UserID, users.Gender, ratings.Rating  
+FROM ratings JOIN users ON (ratings.userid = users.userid);
+
+SELECT Gender, COUNT(Rating) FROM newtable GROUP BY Gender;
+
+As you can see, there are seven commands only:
+
+First three commands are just cleaning for existing tables as I tested the entire code several times.
+Next two commands - creating tables and loading data
+Then, one command is JOIN of two tables and creating new table
+And finally, count ratings by gender in new table and output.
+If you already have proper tables in the system then there are just two last commands required to get results. Compare it with your Python code.
